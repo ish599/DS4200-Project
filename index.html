@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Sector Analysis Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Stock Market Sector Analysis Dashboard</h1>
+        <p>Exploring sector performance, company comparisons, and market trends</p>
+    </header>
+
+    <main>
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'static')">Static Visualizations</button>
+            <button class="tab-link" onclick="openTab(event, 'interactive')">Interactive Visualizations</button>
+        </div>
+
+        <div id="static" class="tab-content active">
+            <section class="figure-block">
+                <h2>Normalized Sector Price Indexes Over Time</h2>
+                <iframe src="fig_altair_normalized_prices.html" width="100%" height="400" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+            </section>
+
+            <section class="figure-block">
+                <h2>Average Return vs Volatility by Company</h2>
+                <iframe src="fig_altair_return_volatility.html" width="100%" height="450" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+            </section>
+
+            <section class="figure-block">
+                <h2>Sector Return Correlations</h2>
+                <iframe src="fig_altair_correlation_heatmap.html" width="100%" height="450" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+            </section>
+        </div>
+
+        <div id="interactive" class="tab-content">
+            <section class="figure-block">
+                <h2>Interactive Company Dashboard</h2>
+                <p class="instructions">Hover over companies to see detailed information.</p>
+                <div id="d3-scatter"></div>
+                <div id="tooltip"></div>
+            </section>
+
+            <section class="figure-block">
+                <h2>Time-Slider: Trading Volume and Price Trends</h2>
+                <p class="instructions">Use the slider to explore trends over the years.</p>
+                <div id="d3-timeslider"></div>
+                <div id="slider-container">
+                    <label>Year: <span id="year-display">2019</span></label>
+                    <input type="range" id="year-slider" min="2019" max="2024" value="2019" step="1">
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        async function createD3Scatterplot() {
+            const data = await d3.json('company_summary.json');
+            const margin = {top: 20, right: 20, bottom: 60, left: 60};
+            const width = 800 - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select('#d3-scatter')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+
+            const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const xScale = d3.scaleLinear()
+                .domain(d3.extent(data, d => d.volatility_pct))
+                .range([0, width])
+                .nice();
+
+            const yScale = d3.scaleLinear()
+                .domain(d3.extent(data, d => d.avg_return_pct))
+                .range([height, 0])
+                .nice();
+
+            const sectors = [...new Set(data.map(d => d.sector))];
+            const colorScale = d3.scaleOrdinal().domain(sectors).range(d3.schemeCategory10);
+            const tooltip = d3.select('#tooltip');
+
+            g.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(xScale));
+            g.append('g').call(d3.axisLeft(yScale));
+
+            g.selectAll('circle')
+                .data(data)
+                .enter()
+                .append('circle')
+                .attr('cx', d => xScale(d.volatility_pct))
+                .attr('cy', d => yScale(d.avg_return_pct))
+                .attr('r', 8)
+                .attr('fill', d => colorScale(d.sector))
+                .attr('opacity', 0.7)
+                .on('mouseover', function(event, d) {
+                    d3.select(this).attr('r', 12).attr('opacity', 1);
+                    tooltip.style('opacity', 1)
+                        .html(`<strong>${d.Ticker}</strong><br>${d.sector}<br>Return: ${d.avg_return_pct.toFixed(3)}%<br>Volatility: ${d.volatility_pct.toFixed(3)}%`)
+                        .style('left', (event.pageX + 10) + 'px')
+                        .style('top', (event.pageY - 10) + 'px');
+                })
+                .on('mousemove', function(event) {
+                    tooltip.style('left', (event.pageX + 10) + 'px').style('top', (event.pageY - 10) + 'px');
+                })
+                .on('mouseout', function() {
+                    d3.select(this).attr('r', 8).attr('opacity', 0.7);
+                    tooltip.style('opacity', 0);
+                });
+
+            g.selectAll('text.label')
+                .data(data)
+                .enter()
+                .append('text')
+                .attr('x', d => xScale(d.volatility_pct))
+                .attr('y', d => yScale(d.avg_return_pct) - 12)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '10px')
+                .text(d => d.Ticker);
+        }
+
+        async function createD3TimeSlider() {
+            const data = await d3.json('time_series_data.json');
+            data.forEach(d => {
+                d.date = new Date(d.date);
+                d.adj_close = +d.adj_close;
+                d.volume = +d.volume;
+            });
+
+            const margin = {top: 20, right: 100, bottom: 60, left: 60};
+            const width = 900 - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select('#d3-timeslider')
+                .append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+
+            const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+            const sectors = [...new Set(data.map(d => d.sector))];
+            const colorScale = d3.scaleOrdinal().domain(sectors).range(d3.schemeCategory10);
+
+            let xScale = d3.scaleTime().range([0, width]);
+            const yPriceScale = d3.scaleLinear().domain(d3.extent(data, d => d.adj_close)).range([height / 2, 0]).nice();
+            const yVolumeScale = d3.scaleLinear().domain(d3.extent(data, d => d.volume)).range([height, height / 2]).nice();
+
+            g.append('line').attr('x1', 0).attr('x2', width).attr('y1', height / 2).attr('y2', height / 2)
+                .attr('stroke', '#ccc').attr('stroke-dasharray', '5,5');
+            g.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${height / 2})`).call(d3.axisBottom(xScale));
+            g.append('g').call(d3.axisLeft(yPriceScale));
+            g.append('g').attr('transform', `translate(${width}, 0)`).call(d3.axisRight(yVolumeScale));
+
+            const priceLine = d3.line().x(d => xScale(d.date)).y(d => yPriceScale(d.adj_close)).curve(d3.curveMonotoneX);
+            const volumeLine = d3.line().x(d => xScale(d.date)).y(d => yVolumeScale(d.volume)).curve(d3.curveMonotoneX);
+
+            function updateChart(year) {
+                const filteredData = data.filter(d => d.date.getFullYear() === year);
+                if (filteredData.length > 0) {
+                    xScale.domain(d3.extent(filteredData, d => d.date));
+                    g.select('.x-axis').remove();
+                    g.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${height / 2})`).call(d3.axisBottom(xScale));
+                }
+
+                g.selectAll('.price-line, .volume-line').remove();
+                d3.group(filteredData, d => d.Ticker).forEach((values, ticker) => {
+                    const sector = values[0].sector;
+                    g.append('path').datum(values).attr('class', 'price-line').attr('fill', 'none')
+                        .attr('stroke', colorScale(sector)).attr('stroke-width', 1.5).attr('opacity', 0.7).attr('d', priceLine);
+                    g.append('path').datum(values).attr('class', 'volume-line').attr('fill', 'none')
+                        .attr('stroke', colorScale(sector)).attr('stroke-width', 1).attr('stroke-dasharray', '3,3')
+                        .attr('opacity', 0.5).attr('d', volumeLine);
+                });
+            }
+
+            document.getElementById('year-slider').addEventListener('input', function() {
+                const year = +this.value;
+                document.getElementById('year-display').textContent = year;
+                updateChart(year);
+            });
+
+            updateChart(2019);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            createD3Scatterplot();
+            createD3TimeSlider();
+        });
+    </script>
+</body>
+</html>

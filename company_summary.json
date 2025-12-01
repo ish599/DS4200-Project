@@ -1,0 +1,66 @@
+[
+  {
+    "Ticker": "AAPL",
+    "sector": "Technology",
+    "avg_return": 0.0013483507826828206,
+    "volatility": 0.019681371305465975,
+    "avg_return_pct": 0.13483507826828206,
+    "volatility_pct": 1.9681371305465976
+  },
+  {
+    "Ticker": "BAC",
+    "sector": "Finance",
+    "avg_return": 0.0007535621866041598,
+    "volatility": 0.020915189178922107,
+    "avg_return_pct": 0.07535621866041597,
+    "volatility_pct": 2.091518917892211
+  },
+  {
+    "Ticker": "CVX",
+    "sector": "Energy",
+    "avg_return": 0.0005655951782148788,
+    "volatility": 0.020367465832046804,
+    "avg_return_pct": 0.05655951782148788,
+    "volatility_pct": 2.0367465832046805
+  },
+  {
+    "Ticker": "JPM",
+    "sector": "Finance",
+    "avg_return": 0.0009516800989644206,
+    "volatility": 0.01886593448948397,
+    "avg_return_pct": 0.09516800989644206,
+    "volatility_pct": 1.886593448948397
+  },
+  {
+    "Ticker": "MSFT",
+    "sector": "Technology",
+    "avg_return": 0.0011104000130632316,
+    "volatility": 0.01794097650151988,
+    "avg_return_pct": 0.11104000130632316,
+    "volatility_pct": 1.7940976501519879
+  },
+  {
+    "Ticker": "PFE",
+    "sector": "Healthcare",
+    "avg_return": 5.247546897030334e-05,
+    "volatility": 0.016549235945207862,
+    "avg_return_pct": 0.005247546897030334,
+    "volatility_pct": 1.6549235945207863
+  },
+  {
+    "Ticker": "UNH",
+    "sector": "Healthcare",
+    "avg_return": 0.00045009983018845967,
+    "volatility": 0.020451977107215226,
+    "avg_return_pct": 0.04500998301884597,
+    "volatility_pct": 2.0451977107215225
+  },
+  {
+    "Ticker": "XOM",
+    "sector": "Energy",
+    "avg_return": 0.0006744105265890012,
+    "volatility": 0.01969818355850505,
+    "avg_return_pct": 0.06744105265890012,
+    "volatility_pct": 1.969818355850505
+  }
+]

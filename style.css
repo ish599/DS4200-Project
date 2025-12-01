@@ -1,0 +1,118 @@
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  background: #fafafa;
+  color: #222;
+}
+
+header {
+  background: #222;
+  color: #fff;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+/* Tabs bar */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+}
+
+.tab-link {
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-link:hover {
+  background: #e2e2e2;
+}
+
+.tab-link.active {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #ffffff;
+  font-weight: 600;
+}
+
+/* Tab content */
+.tab-content {
+  display: none;
+  margin-top: 1rem;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.figure-block {
+  margin-bottom: 1.5rem;
+}
+
+.caption,
+.instructions {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+#d3-scatter,
+#d3-timeslider {
+  width: 100%;
+  min-height: 500px;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#tooltip {
+  position: absolute;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  pointer-events: none;
+  font-size: 12px;
+  z-index: 1000;
+}
+
+#slider-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+#slider-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+#year-slider {
+  width: 100%;
+}
+
+h2 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: #222;
+  font-size: 1.5rem;
+}

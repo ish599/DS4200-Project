@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "rect"}, "encoding": {"color": {"field": "correlation", "scale": {"domain": [-1, 1], "scheme": "redblue"}, "title": "Correlation", "type": "quantitative"}, "tooltip": [{"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "sector_other", "title": "Other sector", "type": "nominal"}, {"field": "correlation", "format": ".2f", "title": "Correlation", "type": "quantitative"}], "x": {"field": "sector", "title": "Sector", "type": "nominal"}, "y": {"field": "sector_other", "title": "Other sector", "type": "nominal"}}, "title": "Correlation between sector daily returns"}, {"mark": {"type": "text", "size": 12}, "encoding": {"color": {"condition": {"test": "datum.correlation > 0", "value": "black"}, "value": "black"}, "text": {"field": "correlation", "format": ".2f", "type": "quantitative"}, "x": {"field": "sector", "type": "nominal"}, "y": {"field": "sector_other", "type": "nominal"}}}], "data": {"name": "data-f4fe8cfd8ca90a3f63aeaed9539f606b"}, "height": 400, "width": 400, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-f4fe8cfd8ca90a3f63aeaed9539f606b": [{"sector": "Energy", "sector_other": "Energy", "correlation": 1.0}, {"sector": "Finance", "sector_other": "Energy", "correlation": 0.6263328125134275}, {"sector": "Healthcare", "sector_other": "Energy", "correlation": 0.37408408599291754}, {"sector": "Technology", "sector_other": "Energy", "correlation": 0.3459172988873609}, {"sector": "Energy", "sector_other": "Finance", "correlation": 0.6263328125134275}, {"sector": "Finance", "sector_other": "Finance", "correlation": 1.0}, {"sector": "Healthcare", "sector_other": "Finance", "correlation": 0.4229988321141144}, {"sector": "Technology", "sector_other": "Finance", "correlation": 0.4778869341851367}, {"sector": "Energy", "sector_other": "Healthcare", "correlation": 0.37408408599291754}, {"sector": "Finance", "sector_other": "Healthcare", "correlation": 0.4229988321141144}, {"sector": "Healthcare", "sector_other": "Healthcare", "correlation": 1.0}, {"sector": "Technology", "sector_other": "Healthcare", "correlation": 0.41077312124723875}, {"sector": "Energy", "sector_other": "Technology", "correlation": 0.3459172988873609}, {"sector": "Finance", "sector_other": "Technology", "correlation": 0.4778869341851367}, {"sector": "Healthcare", "sector_other": "Technology", "correlation": 0.41077312124723875}, {"sector": "Technology", "sector_other": "Technology", "correlation": 1.0}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

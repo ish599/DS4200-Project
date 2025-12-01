@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"name": "data-ba09aa84cfdf78d6e23b2fe23baafaa3"}, "mark": {"type": "circle", "size": 80}, "encoding": {"color": {"field": "sector", "title": "Sector", "type": "nominal"}, "tooltip": [{"field": "Ticker", "title": "Ticker", "type": "nominal"}, {"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "avg_return_pct", "format": ".3f", "title": "Average return", "type": "quantitative"}, {"field": "volatility_pct", "format": ".3f", "title": "Volatility", "type": "quantitative"}], "x": {"field": "volatility_pct", "title": "Volatility (daily standard deviation in percent)", "type": "quantitative"}, "y": {"field": "avg_return_pct", "title": "Average daily return in percent", "type": "quantitative"}}, "height": 400, "title": "Average daily return vs volatility by company", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-ba09aa84cfdf78d6e23b2fe23baafaa3": [{"Ticker": "AAPL", "sector": "Technology", "avg_return": 0.0013483507826828206, "volatility": 0.019681371305465975, "avg_return_pct": 0.13483507826828206, "volatility_pct": 1.9681371305465976}, {"Ticker": "BAC", "sector": "Finance", "avg_return": 0.0007535621866041598, "volatility": 0.020915189178922107, "avg_return_pct": 0.07535621866041597, "volatility_pct": 2.091518917892211}, {"Ticker": "CVX", "sector": "Energy", "avg_return": 0.0005655951782148788, "volatility": 0.020367465832046804, "avg_return_pct": 0.05655951782148788, "volatility_pct": 2.0367465832046805}, {"Ticker": "JPM", "sector": "Finance", "avg_return": 0.0009516800989644206, "volatility": 0.01886593448948397, "avg_return_pct": 0.09516800989644206, "volatility_pct": 1.886593448948397}, {"Ticker": "MSFT", "sector": "Technology", "avg_return": 0.0011104000130632316, "volatility": 0.01794097650151988, "avg_return_pct": 0.11104000130632316, "volatility_pct": 1.7940976501519879}, {"Ticker": "PFE", "sector": "Healthcare", "avg_return": 5.247546897030334e-05, "volatility": 0.016549235945207862, "avg_return_pct": 0.005247546897030334, "volatility_pct": 1.6549235945207863}, {"Ticker": "UNH", "sector": "Healthcare", "avg_return": 0.00045009983018845967, "volatility": 0.020451977107215226, "avg_return_pct": 0.04500998301884597, "volatility_pct": 2.0451977107215225}, {"Ticker": "XOM", "sector": "Energy", "avg_return": 0.0006744105265890012, "volatility": 0.01969818355850505, "avg_return_pct": 0.06744105265890012, "volatility_pct": 1.969818355850505}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
