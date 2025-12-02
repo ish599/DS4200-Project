@@ -257,17 +257,18 @@
             const yPriceScale = d3.scaleLinear().domain(d3.extent(data, d => d.adj_close)).range([height / 2, 0]).nice();
             const yVolumeScale = d3.scaleLinear().domain(d3.extent(data, d => d.volume)).range([height, height / 2]).nice();
 
-            // Format functions
-            const formatPrice = d3.format('$.2f');
-            const formatVolume = d => {
-                const millions = d / 1e6;
-                return millions.toFixed(1) + 'M';
-            };
+            // Add gridlines
+            const xAxisGrid = d3.axisBottom(xScale).tickSize(-height / 2).tickFormat('');
+            const yPriceAxisGrid = d3.axisLeft(yPriceScale).tickSize(-width).tickFormat('');
+            const yVolumeAxisGrid = d3.axisRight(yVolumeScale).tickSize(-width).tickFormat('');
 
             // Divider line
             g.append('line').attr('x1', 0).attr('x2', width).attr('y1', height / 2).attr('y2', height / 2)
                 .attr('stroke', '#999').attr('stroke-width', 2).attr('stroke-dasharray', '5,5');
 
+            // Format functions
+            const formatPrice = d3.format('$.2f');
+            const formatVolume = d => (d / 1e6).toFixed(1) + 'M';
             const formatDate = d3.timeFormat('%b %d, %Y');
 
             const priceLine = d3.line()
@@ -275,7 +276,7 @@
                 .y(d => yPriceScale(d.adj_close))
                 .curve(d3.curveMonotoneX);
 
-            let volumeLine = d3.line()
+            const volumeLine = d3.line()
                 .x(d => xScale(d.date))
                 .y(d => yVolumeScale(d.volume))
                 .curve(d3.curveMonotoneX);
@@ -301,71 +302,24 @@
                 if (filteredData.length > 0) {
                     xScale.domain(d3.extent(filteredData, d => d.date));
                     
-                    // Update volume scale based on filtered data for better visibility
-                    const volumeExtent = d3.extent(filteredData, d => d.volume);
-                    const yVolumeScaleFiltered = d3.scaleLinear()
-                        .domain(volumeExtent)
-                        .range([height, height / 2])
-                        .nice();
+                    // Update gridlines
+                    g.selectAll('.grid').remove();
+                    g.append('g').attr('class', 'grid').attr('transform', `translate(0,${height / 2})`).call(xAxisGrid);
+                    g.append('g').attr('class', 'grid').call(yPriceAxisGrid);
+                    g.append('g').attr('class', 'grid').attr('transform', `translate(${width}, 0)`).call(yVolumeAxisGrid);
                     
-                    // Update axes first (before gridlines so they have the correct domain)
+                    // Update axes
                     g.selectAll('.x-axis, .y-price-axis, .y-volume-axis').remove();
                     
-                    // X-axis with proper date formatting
-                    const xAxis = d3.axisBottom(xScale)
-                        .ticks(d3.timeMonth.every(1))
-                        .tickFormat(d3.timeFormat('%b'));
-                    g.append('g')
-                        .attr('class', 'x-axis')
-                        .attr('transform', `translate(0,${height / 2})`)
-                        .call(xAxis)
-                        .selectAll('text')
-                        .style('text-anchor', 'middle')
-                        .style('font-size', '11px');
+                    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b'));
+                    g.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${height / 2})`).call(xAxis)
+                        .selectAll('text').style('text-anchor', 'middle');
                     
-                    // Price Y-axis
-                    const yPriceAxis = d3.axisLeft(yPriceScale)
-                        .tickFormat(formatPrice);
-                    g.append('g')
-                        .attr('class', 'y-price-axis')
-                        .call(yPriceAxis)
-                        .selectAll('text')
-                        .style('font-size', '11px');
+                    const yPriceAxis = d3.axisLeft(yPriceScale).tickFormat(formatPrice);
+                    g.append('g').attr('class', 'y-price-axis').call(yPriceAxis);
                     
-                    // Volume Y-axis with proper formatting
-                    const yVolumeAxis = d3.axisRight(yVolumeScaleFiltered)
-                        .tickFormat(formatVolume);
-                    g.append('g')
-                        .attr('class', 'y-volume-axis')
-                        .attr('transform', `translate(${width}, 0)`)
-                        .call(yVolumeAxis)
-                        .selectAll('text')
-                        .style('font-size', '11px');
-                    
-                    // Update gridlines (after axes are created with correct domain)
-                    g.selectAll('.grid').remove();
-                    const xAxisGrid = d3.axisBottom(xScale)
-                        .ticks(d3.timeMonth.every(1))
-                        .tickSize(-height / 2)
-                        .tickFormat('');
-                    const yPriceAxisGrid = d3.axisLeft(yPriceScale)
-                        .tickSize(-width)
-                        .tickFormat('');
-                    const yVolumeAxisGrid = d3.axisRight(yVolumeScaleFiltered)
-                        .tickSize(-width)
-                        .tickFormat('');
-                    
-                    g.append('g')
-                        .attr('class', 'grid')
-                        .attr('transform', `translate(0,${height / 2})`)
-                        .call(xAxisGrid);
-                    g.append('g')
-                        .attr('class', 'grid')
-                        .call(yPriceAxisGrid);
-                    g.append('g')
-                        .attr('class', 'grid')
-                        .attr('transform', `translate(${width}, 0)`)
-                        .call(yVolumeAxisGrid);
+                    const yVolumeAxis = d3.axisRight(yVolumeScale).tickFormat(formatVolume);
+                    g.append('g').attr('class', 'y-volume-axis').attr('transform', `translate(${width}, 0)`).call(yVolumeAxis);
 
                     // Add axis labels
                     g.selectAll('.axis-label').remove();
@@ -387,12 +341,6 @@
 
                 // Remove old lines
                 g.selectAll('.price-line, .volume-line, .price-point, .volume-point').remove();
-                
-                // Update volume line generator with filtered scale
-                volumeLine = d3.line()
-                    .x(d => xScale(d.date))
-                    .y(d => yVolumeScaleFiltered(d.volume))
-                    .curve(d3.curveMonotoneX);
                 
                 // Group by ticker
                 const grouped = d3.group(filteredData, d => d.Ticker);
@@ -439,7 +387,7 @@
                     });
                 });
 
-                // Mouse tracking on overlay (update to use filtered volume scale)
+                // Mouse tracking on overlay
                 overlay.on('mousemove', function(event) {
                     const [mouseX] = d3.pointer(event, this);
                     const date = xScale.invert(mouseX);
