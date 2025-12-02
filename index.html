@@ -327,18 +327,21 @@
 
                     // Add axis labels
                     g.selectAll('.axis-label').remove();
+                    // Date label - moved higher (reduced from 50 to 35)
                     g.append('text').attr('class', 'axis-label')
-                        .attr('transform', `translate(${width / 2}, ${height / 2 + 50})`)
+                        .attr('transform', `translate(${width / 2}, ${height / 2 + 35})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Date');
                     
+                    // Price label (left Y-axis)
                     g.append('text').attr('class', 'axis-label')
                         .attr('transform', 'rotate(-90)').attr('y', -60).attr('x', -height / 4)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Price (USD)');
                     
+                    // Volume label - moved to bottom of the chart (bottom graph area)
                     g.append('text').attr('class', 'axis-label')
-                        .attr('transform', 'rotate(90)').attr('y', -width - 20).attr('x', height / 4)
+                        .attr('transform', `translate(${width / 2}, ${height + 50})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Volume (Millions)');
                 }
