@@ -311,15 +311,19 @@
                     // Update axes
                     g.selectAll('.x-axis, .y-price-axis, .y-volume-axis').remove();
                     
-                    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat('%b'));
+                    const xAxis = d3.axisBottom(xScale)
+                        .ticks(d3.timeMonth.every(1))
+                        .tickFormat(d3.timeFormat('%b'));
                     g.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${height / 2})`).call(xAxis)
-                        .selectAll('text').style('text-anchor', 'middle');
+                        .selectAll('text').style('text-anchor', 'middle').style('font-size', '11px');
                     
                     const yPriceAxis = d3.axisLeft(yPriceScale).tickFormat(formatPrice);
-                    g.append('g').attr('class', 'y-price-axis').call(yPriceAxis);
+                    g.append('g').attr('class', 'y-price-axis').call(yPriceAxis)
+                        .selectAll('text').style('font-size', '11px');
                     
                     const yVolumeAxis = d3.axisRight(yVolumeScale).tickFormat(formatVolume);
-                    g.append('g').attr('class', 'y-volume-axis').attr('transform', `translate(${width}, 0)`).call(yVolumeAxis);
+                    g.append('g').attr('class', 'y-volume-axis').attr('transform', `translate(${width}, 0)`).call(yVolumeAxis)
+                        .selectAll('text').style('font-size', '11px');
 
                     // Add axis labels
                     g.selectAll('.axis-label').remove();
