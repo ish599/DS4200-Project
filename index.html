@@ -14,46 +14,199 @@
     </header>
 
     <main>
+        <!-- Project Introduction -->
+        <section class="intro-section">
+            <h2>Project Introduction</h2>
+            <p>
+                This dashboard provides a comprehensive analysis of stock market performance across multiple sectors 
+                from 2019 to 2025. The project aims to explore how different economic sectors respond to market 
+                conditions, major events, and economic cycles. By examining normalized price indexes, return-volatility 
+                relationships, sector correlations, and temporal trends, we can gain insights into sector behavior 
+                and identify patterns that may inform investment strategies.
+            </p>
+            <p>
+                The analysis focuses on four key sectors: Technology, Energy, Finance, and Healthcare, with two 
+                representative companies from each sector. This selection allows for meaningful comparisons while 
+                maintaining a manageable dataset for detailed exploration.
+            </p>
+        </section>
+
+        <!-- Data Introduction -->
+        <section class="intro-section">
+            <h2>Data Introduction</h2>
+            <p>
+                The dataset consists of daily stock price data for eight major companies across four sectors:
+            </p>
+            <ul>
+                <li><strong>Technology:</strong> Apple Inc. (AAPL) and Microsoft Corporation (MSFT)</li>
+                <li><strong>Energy:</strong> Exxon Mobil Corporation (XOM) and Chevron Corporation (CVX)</li>
+                <li><strong>Finance:</strong> JPMorgan Chase & Co. (JPM) and Bank of America Corporation (BAC)</li>
+                <li><strong>Healthcare:</strong> UnitedHealth Group Inc. (UNH) and Pfizer Inc. (PFE)</li>
+            </ul>
+            <p>
+                The data spans from January 1, 2019 to December 1, 2025, capturing significant market events including 
+                the COVID-19 pandemic, market crashes, and economic recessions. For each company, we track:
+            </p>
+            <ul>
+                <li><strong>Adjusted Closing Prices:</strong> Stock prices adjusted for splits and dividends</li>
+                <li><strong>Trading Volume:</strong> Number of shares traded daily</li>
+                <li><strong>Daily Returns:</strong> Percentage change in price from day to day</li>
+                <li><strong>Volatility:</strong> Standard deviation of returns over rolling windows</li>
+            </ul>
+            <p>
+                Sector-level aggregations are computed as equal-weighted averages of constituent companies, providing 
+                a representative view of sector performance. All visualizations use normalized indexes starting at 100 
+                to facilitate cross-sector comparisons.
+            </p>
+        </section>
+
         <div class="tabs">
-            <button class="tab-link active" onclick="openTab(event, 'static')">Static Visualizations</button>
-            <button class="tab-link" onclick="openTab(event, 'interactive')">Interactive Visualizations</button>
+            <button class="tab-link active" onclick="openTab(event, 'time-series')">Time Series Analysis</button>
+            <button class="tab-link" onclick="openTab(event, 'risk-return')">Risk-Return Analysis</button>
+            <button class="tab-link" onclick="openTab(event, 'sector-comparison')">Sector Comparison</button>
         </div>
 
-        <div id="static" class="tab-content active">
+        <!-- Time Series Analysis -->
+        <div id="time-series" class="tab-content active">
             <section class="figure-block">
                 <h2>Normalized Sector Price Indexes Over Time</h2>
-                <iframe src="fig_altair_normalized_prices.html" width="100%" height="400" frameborder="0" style="border: 1px solid #ddd;"></iframe>
-            </section>
-
-            <section class="figure-block">
-                <h2>Average Return vs Volatility by Company</h2>
-                <iframe src="fig_altair_return_volatility.html" width="100%" height="450" frameborder="0" style="border: 1px solid #ddd;"></iframe>
-            </section>
-
-            <section class="figure-block">
-                <h2>Sector Return Correlations</h2>
-                <iframe src="fig_altair_correlation_heatmap.html" width="100%" height="450" frameborder="0" style="border: 1px solid #ddd;"></iframe>
-            </section>
-        </div>
-
-        <div id="interactive" class="tab-content">
-            <section class="figure-block">
-                <h2>Interactive Company Dashboard</h2>
-                <p class="instructions">Hover over companies to see detailed information.</p>
-                <div id="d3-scatter"></div>
-                <div id="tooltip"></div>
+                <iframe src="fig_altair_normalized_prices.html" width="100%" height="450" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> This visualization shows how different sectors have performed over time, 
+                    normalized to a starting value of 100. The vertical dashed lines highlight major market events: 
+                    the COVID-19 pandemic declaration (March 2020), the market crash that followed, and the 2022 recession. 
+                    We can observe that all sectors experienced significant declines during the COVID-19 crash, with Technology 
+                    and Healthcare showing strong recovery patterns. Energy sectors show more volatility, particularly during 
+                    the 2022 period. This chart helps identify which sectors are more resilient to economic shocks and which 
+                    recover faster.</p>
+                </div>
             </section>
 
             <section class="figure-block">
                 <h2>Time-Slider: Trading Volume and Price Trends</h2>
-                <p class="instructions">Use the slider to explore trends over the years.</p>
+                <p class="instructions">Use the slider to explore trends over the years. Hover over the chart to see detailed information.</p>
                 <div id="d3-timeslider"></div>
                 <div id="slider-container">
                     <label>Year: <span id="year-display">2019</span></label>
                     <input type="range" id="year-slider" min="2019" max="2024" value="2019" step="1">
                 </div>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> This interactive visualization allows you to explore price and volume 
+                    trends for individual companies by year. The top half shows adjusted closing prices, while the bottom half 
+                    displays trading volume. Use the year slider to focus on specific periods. Higher trading volumes often 
+                    coincide with significant price movements, indicating periods of high market activity. This helps identify 
+                    which companies and sectors experienced the most trading activity during different market conditions, 
+                    connecting to the broader sector trends shown in the normalized price chart above.</p>
+                </div>
             </section>
         </div>
+
+        <!-- Risk-Return Analysis -->
+        <div id="risk-return" class="tab-content">
+            <section class="figure-block">
+                <h2>Average Return vs Volatility by Company</h2>
+                <iframe src="fig_altair_return_volatility.html" width="100%" height="700" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> This visualization combines two related views of risk-return relationships. 
+                    The top chart shows monthly return trends, allowing you to see how returns fluctuate over time for different 
+                    sectors. The bottom scatter plot displays the classic risk-return tradeoff, where each point represents a company. 
+                    Companies in the upper-left quadrant offer high returns with low volatility (ideal), while those in the 
+                    lower-right have high volatility with low returns (less desirable). Click on sectors in the legend to filter 
+                    and compare. Click on individual points to highlight them. This analysis reveals which sectors and companies 
+                    provide better risk-adjusted returns, connecting to the sector performance patterns observed in the time series.</p>
+                </div>
+            </section>
+
+            <section class="figure-block">
+                <h2>Interactive Company Dashboard</h2>
+                <p class="instructions">Hover over companies to see detailed information. Use the legend to filter by sector.</p>
+                <div id="d3-scatter"></div>
+                <div id="tooltip"></div>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> This interactive scatter plot provides a detailed view of the risk-return 
+                    profile for each company. The crosshair lines help you precisely read values when hovering. Companies are 
+                    color-coded by sector, making it easy to identify sector-level patterns. Notice how companies within the same 
+                    sector tend to cluster together, indicating similar risk-return characteristics. This visualization complements 
+                    the monthly trend analysis above by providing an aggregate view of each company's overall performance, helping 
+                    to identify outliers and sector-specific patterns.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sector Comparison -->
+        <div id="sector-comparison" class="tab-content">
+            <section class="figure-block">
+                <h2>Sector Return Correlations and Volatility Analysis</h2>
+                <iframe src="fig_altair_correlation_heatmap.html" width="100%" height="800" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> This multi-panel visualization provides comprehensive sector relationship analysis. 
+                    The top heatmap shows correlation coefficients between sector daily returns, where values closer to 1 indicate 
+                    sectors that move together, and values closer to -1 indicate inverse relationships. The bottom-left chart shows 
+                    how volatility has evolved over time by sector, revealing periods of increased market uncertainty. The bottom-right 
+                    box plot displays the distribution of volatility across sectors, showing which sectors are consistently more or less 
+                    volatile. High correlations between sectors (especially during crises) suggest systemic risks, while low correlations 
+                    indicate diversification opportunities. This analysis connects to the time series visualization by explaining why 
+                    sectors moved together during major events like COVID-19.</p>
+                </div>
+            </section>
+
+            <section class="figure-block">
+                <h2>Sector Performance Comparison</h2>
+                <iframe src="fig_altair_sector_comparison.html" width="100%" height="650" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+                <div class="interpretation">
+                    <p><strong>Interpretation:</strong> These bar charts and box plots provide direct comparisons between sectors. 
+                    The top row shows average returns and volatility by sector, making it easy to identify which sectors have 
+                    historically performed best. The bottom row shows distributions, revealing the variability within each sector. 
+                    Sectors with wide boxes have more internal variation (companies within the sector differ significantly), while 
+                    narrow boxes indicate more homogeneous sector performance. This visualization helps answer questions like: 
+                    "Which sector offers the best average returns?" and "Which sector has the most consistent performance?" 
+                    These insights complement the correlation analysis by providing context for why certain sectors move together 
+                    or independently.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Conclusion -->
+        <section class="conclusion-section">
+            <h2>Conclusion</h2>
+            <p>
+                This comprehensive analysis of stock market sector performance reveals several key insights:
+            </p>
+            <h3>Time Series Patterns</h3>
+            <p>
+                The normalized price index visualization demonstrates that all sectors experienced significant declines during 
+                the COVID-19 pandemic, but recovery patterns varied. Technology and Healthcare sectors showed strong resilience 
+                and rapid recovery, while Energy sectors exhibited higher volatility throughout the period. The 2022 recession 
+                affected sectors differently, with some showing more pronounced impacts than others.
+            </p>
+            <h3>Risk-Return Relationships</h3>
+            <p>
+                The risk-return analysis reveals that sector characteristics are consistent: companies within the same sector 
+                tend to cluster in similar risk-return spaces. Technology companies generally offer higher returns but with 
+                moderate volatility, while Energy companies show higher volatility with variable returns. The monthly trend 
+                analysis shows that these relationships are not static but evolve over time, with periods of convergence and 
+                divergence between sectors.
+            </p>
+            <h3>Sector Interdependencies</h3>
+            <p>
+                The correlation analysis shows that sectors are generally positively correlated, especially during market crises, 
+                indicating systemic risks that affect all sectors. However, correlation strength varies, with some sector pairs 
+                showing stronger relationships than others. The volatility distribution analysis reveals that sector volatility 
+                patterns have changed over time, with increased volatility during crisis periods affecting all sectors but to 
+                varying degrees.
+            </p>
+            <h3>Practical Implications</h3>
+            <p>
+                These findings suggest that while diversification across sectors provides some protection, complete risk 
+                mitigation is challenging during systemic events. Investors should consider both sector-level characteristics 
+                and individual company performance when constructing portfolios. The varying recovery patterns and volatility 
+                characteristics suggest that sector rotation strategies may be effective, particularly during economic transitions.
+            </p>
+            <p>
+                Future research could extend this analysis to include more companies per sector, additional sectors, and 
+                incorporate macroeconomic indicators to better understand the drivers of sector performance differences.
+            </p>
+        </section>
     </main>
 
     <script>
@@ -62,6 +215,14 @@
             document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             evt.currentTarget.classList.add('active');
+        }
+
+        // Add brush and link functionality for sector filtering
+        let selectedSectors = new Set();
+        
+        function setupBrushAndLink() {
+            // This will be enhanced with actual brush implementation
+            // For now, we'll use the existing legend interactions
         }
 
         async function createD3Scatterplot() {
@@ -195,7 +356,7 @@
                 });
 
             // Add ticker labels
-            g.selectAll('text.label')
+            const labels = g.selectAll('text.label')
                 .data(data)
                 .enter()
                 .append('text')
@@ -207,20 +368,34 @@
                 .attr('font-weight', '500')
                 .text(d => d.Ticker);
 
-            // Add legend
+            // Add legend with clickable filtering
             const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
+            let selectedSectorsScatter = new Set(sectors);
+            
             const legendItems = legend.selectAll('.legend-item')
                 .data(sectors)
                 .enter()
                 .append('g')
                 .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 25})`);
+                .attr('transform', (d, i) => `translate(0, ${i * 25})`)
+                .style('cursor', 'pointer')
+                .on('click', function(event, d) {
+                    if (selectedSectorsScatter.has(d)) {
+                        selectedSectorsScatter.delete(d);
+                        d3.select(this).select('rect').attr('opacity', 0.3);
+                    } else {
+                        selectedSectorsScatter.add(d);
+                        d3.select(this).select('rect').attr('opacity', 1);
+                    }
+                    updateFilteredScatter();
+                });
 
             legendItems.append('rect')
                 .attr('width', 18)
                 .attr('height', 18)
                 .attr('fill', d => colorScale(d))
-                .attr('rx', 3);
+                .attr('rx', 3)
+                .attr('opacity', 1);
 
             legendItems.append('text')
                 .attr('x', 25)
@@ -228,6 +403,15 @@
                 .attr('font-size', '12px')
                 .attr('fill', '#333')
                 .text(d => d);
+            
+            function updateFilteredScatter() {
+                circles
+                    .attr('opacity', d => selectedSectorsScatter.has(d.sector) ? 0.7 : 0.1)
+                    .attr('pointer-events', d => selectedSectorsScatter.has(d.sector) ? 'all' : 'none');
+                
+                labels
+                    .attr('opacity', d => selectedSectorsScatter.has(d.sector) ? 1 : 0.1);
+            }
         }
 
         async function createD3TimeSlider() {
@@ -252,6 +436,7 @@
             const sectors = [...new Set(data.map(d => d.sector))];
             const colorScale = d3.scaleOrdinal().domain(sectors).range(d3.schemeCategory10);
             const tooltip = d3.select('#tooltip');
+            let selectedSectorsTime = new Set(sectors);
 
             let xScale = d3.scaleTime().range([0, width]);
             const yPriceScale = d3.scaleLinear().domain(d3.extent(data, d => d.adj_close)).range([height / 2, 0]).nice();
@@ -298,7 +483,11 @@
                 .attr('opacity', 0);
 
             function updateChart(year) {
-                const filteredData = data.filter(d => d.date.getFullYear() === year);
+                let filteredData = data.filter(d => d.date.getFullYear() === year);
+                // Apply sector filter
+                if (selectedSectorsTime.size < sectors.length) {
+                    filteredData = filteredData.filter(d => selectedSectorsTime.has(d.sector));
+                }
                 if (filteredData.length > 0) {
                     xScale.domain(d3.extent(filteredData, d => d.date));
                     
@@ -442,20 +631,59 @@
                 });
             }
 
-            // Add legend
+            // Add sector selector dropdown
+            const selectorContainer = d3.select('#d3-timeslider')
+                .append('div')
+                .style('margin-bottom', '1rem')
+                .style('padding', '0.5rem')
+                .style('background', '#f9f9f9')
+                .style('border-radius', '4px');
+            
+            selectorContainer.append('label')
+                .text('Filter by Sector: ')
+                .style('margin-right', '0.5rem')
+                .style('font-weight', '600');
+            
+            const selector = selectorContainer.append('select')
+                .style('padding', '0.25rem')
+                .style('border-radius', '4px')
+                .style('border', '1px solid #ddd')
+                .on('change', function() {
+                    const selected = this.value;
+                    selectedSectorsTime = selected === 'All' ? new Set(sectors) : new Set([selected]);
+                    updateChart(document.getElementById('year-slider').value);
+                });
+            
+            selector.append('option').attr('value', 'All').text('All Sectors');
+            sectors.forEach(s => selector.append('option').attr('value', s).text(s));
+
+            // Add legend with clickable filtering
             const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
+            
             const legendItems = legend.selectAll('.legend-item')
                 .data(sectors)
                 .enter()
                 .append('g')
                 .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 25})`);
+                .attr('transform', (d, i) => `translate(0, ${i * 25})`)
+                .style('cursor', 'pointer')
+                .on('click', function(event, d) {
+                    if (selectedSectorsTime.has(d)) {
+                        selectedSectorsTime.delete(d);
+                        d3.select(this).select('rect').attr('opacity', 0.3);
+                    } else {
+                        selectedSectorsTime.add(d);
+                        d3.select(this).select('rect').attr('opacity', 1);
+                    }
+                    updateChart(document.getElementById('year-slider').value);
+                });
 
             legendItems.append('rect')
                 .attr('width', 18)
                 .attr('height', 18)
                 .attr('fill', d => colorScale(d))
-                .attr('rx', 3);
+                .attr('rx', 3)
+                .attr('opacity', 1);
 
             legendItems.append('text')
                 .attr('x', 25)

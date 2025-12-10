@@ -138,3 +138,50 @@ h2 {
   color: #222;
   font-size: 1.5rem;
 }
+
+h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.intro-section {
+  background: #fff;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.intro-section ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.intro-section li {
+  margin: 0.5rem 0;
+}
+
+.conclusion-section {
+  background: #fff;
+  padding: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.interpretation {
+  background: #f9f9f9;
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  border-left: 4px solid #4a90e2;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.interpretation p {
+  margin: 0;
+}
