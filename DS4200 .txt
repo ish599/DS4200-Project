@@ -1,0 +1,26 @@
+﻿Visualization Design Explanation
+For this project our team designed a set of visualizations to help users explore stock market patterns across different sectors and companies.  We focused on building clear Altair based charts that highlight trends in price movement volatility and relationships between sectors.  This explanation describes the decisions we made while creating the dashboard.
+
+
+Prioritizing Clarity
+We organized the dashboard so that users start with broad trends before moving into more detailed comparisons.  The normalized price index chart introduces how each sector behaves over time and sets the stage for the rest of the analysis.  We kept titles labels and axes simple to make the charts easy to read and avoided unnecessary visual clutter.
+
+
+Use of Color
+We used a consistent color palette across all of the charts so sectors and companies appear in the same colors throughout the dashboard.  This makes it easier for viewers to follow the same category across multiple visualizations.  We also avoided overly bright colors to keep the line charts and scatterplots readable.
+
+
+Interactivity
+Since Altair supports built in interactivity we included hover tooltips and other interactive elements to make the visualizations more informative.  For example users can hover over the return volatility scatterplot to see specific company statistics or inspect exact dates in the normalized time series.  These interactions allow users to explore detailed values without overwhelming the dashboard with too many charts.
+
+
+Layout and Information Flow
+We structured the dashboard from general to specific. The time series chart comes first to show overall movement.  The sector correlation heatmap follows to show relationships between sectors.  After that the return volatility scatterplot highlights risk and performance at the company level and the sector comparison chart provides additional context.  This layout creates a natural flow and helps viewers build understanding step by step.
+
+
+Consistency Across Visuals
+All of the visualizations were generated using the same Altair settings in the make_altair_charts.py file which kept the style consistent. The charts share similar font sizes, color mapping, and formatting.  The HTML and CSS files also maintain consistent spacing and alignment across the dashboard so the visuals feel unified.
+
+
+Published Website
+Our project website can be viewed at the following link: ds-4200-project.vercel.app
