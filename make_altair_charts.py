@@ -8,10 +8,11 @@ import yfinance as yf
 
 alt.data_transformers.disable_max_rows()
 
-# Improve chart quality
+# Improve chart quality and disable editor options
 alt.renderers.set_embed_options(
-    scaleFactor=2,  # Higher resolution for better quality
-    theme='default'
+    scaleFactor=2,
+    theme='default',
+    actions=False  # Disable the editor menu (Open in Vega Editor, etc.)
 )
 
 TICKERS = {
@@ -542,14 +543,33 @@ def main():
     corr_long = build_sector_correlation(prices)
 
     print("Creating Altair charts...")
-    make_chart_normalized_prices(sector_index).save(os.path.join(OUTPUT_DIR, "fig_altair_normalized_prices.html"))
-    make_chart_return_vs_vol(company_summary, prices).save(os.path.join(OUTPUT_DIR, "fig_altair_return_volatility.html"))
-    make_chart_correlation_heatmap(corr_long, prices).save(os.path.join(OUTPUT_DIR, "fig_altair_correlation_heatmap.html"))
+    # Save charts with editor options disabled for clean integration
+    embed_options = {
+        'actions': False,  # Disable editor menu
+        'scaleFactor': 2,  # Higher quality
+        'theme': 'default'
+    }
+    
+    make_chart_normalized_prices(sector_index).save(
+        os.path.join(OUTPUT_DIR, "fig_altair_normalized_prices.html"),
+        embed_options=embed_options
+    )
+    make_chart_return_vs_vol(company_summary, prices).save(
+        os.path.join(OUTPUT_DIR, "fig_altair_return_volatility.html"),
+        embed_options=embed_options
+    )
+    make_chart_correlation_heatmap(corr_long, prices).save(
+        os.path.join(OUTPUT_DIR, "fig_altair_correlation_heatmap.html"),
+        embed_options=embed_options
+    )
     
     # Create additional sector comparison charts
     print("Creating sector comparison charts...")
     sector_comparison = make_sector_comparison_charts(company_summary, prices)
-    sector_comparison.save(os.path.join(OUTPUT_DIR, "fig_altair_sector_comparison.html"))
+    sector_comparison.save(
+        os.path.join(OUTPUT_DIR, "fig_altair_sector_comparison.html"),
+        embed_options=embed_options
+    )
 
     print("Exporting JSON data...")
     with open(os.path.join(OUTPUT_DIR, "company_summary.json"), "w") as f:
