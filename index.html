@@ -731,8 +731,10 @@
                     updateChart(document.getElementById('year-slider').value);
                 });
             
-            selector.append('option').attr('value', 'All').text('All Sectors').attr('selected', true);
+            const allOption = selector.append('option').attr('value', 'All').text('All Sectors');
             sectors.forEach(s => selector.append('option').attr('value', s).text(s));
+            // Set default selection
+            selector.property('value', 'All');
 
             document.getElementById('year-slider').addEventListener('input', function() {
                 const year = +this.value;
