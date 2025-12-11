@@ -8,6 +8,12 @@ import yfinance as yf
 
 alt.data_transformers.disable_max_rows()
 
+# Improve chart quality
+alt.renderers.set_embed_options(
+    scaleFactor=2,  # Higher resolution for better quality
+    theme='default'
+)
+
 TICKERS = {
     "AAPL": "Technology",
     "MSFT": "Technology",

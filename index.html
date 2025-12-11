@@ -234,7 +234,11 @@
             const svg = d3.select('#d3-scatter')
                 .append('svg')
                 .attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom);
+                .attr('height', height + margin.top + margin.bottom)
+                .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .style('max-width', '100%')
+                .style('height', 'auto')
+                .attr('preserveAspectRatio', 'xMidYMid meet');
 
             const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -307,7 +311,7 @@
                 .attr('stroke-dasharray', '3,3')
                 .attr('opacity', 0);
 
-            // Add circles
+            // Add circles with improved rendering
             const circles = g.selectAll('circle')
                 .data(data)
                 .enter()
@@ -320,6 +324,7 @@
                 .attr('stroke', 'white')
                 .attr('stroke-width', 2)
                 .style('cursor', 'pointer')
+                .style('shape-rendering', 'geometricPrecision')
                 .on('mouseover', function(event, d) {
                     d3.select(this).attr('r', 14).attr('opacity', 1).attr('stroke-width', 3);
                     
@@ -429,7 +434,11 @@
             const svg = d3.select('#d3-timeslider')
                 .append('svg')
                 .attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom);
+                .attr('height', height + margin.top + margin.bottom)
+                .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .style('max-width', '100%')
+                .style('height', 'auto')
+                .attr('preserveAspectRatio', 'xMidYMid meet');
 
             const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -439,13 +448,10 @@
             let selectedSectorsTime = new Set(sectors);
 
             let xScale = d3.scaleTime().range([0, width]);
-            const yPriceScale = d3.scaleLinear().domain(d3.extent(data, d => d.adj_close)).range([height / 2, 0]).nice();
-            const yVolumeScale = d3.scaleLinear().domain(d3.extent(data, d => d.volume)).range([height, height / 2]).nice();
+            let yPriceScale = d3.scaleLinear().range([height / 2, 0]);
+            let yVolumeScale = d3.scaleLinear().range([height, height / 2]);
 
-            // Add gridlines
-            const xAxisGrid = d3.axisBottom(xScale).tickSize(-height / 2).tickFormat('');
-            const yPriceAxisGrid = d3.axisLeft(yPriceScale).tickSize(-width).tickFormat('');
-            const yVolumeAxisGrid = d3.axisRight(yVolumeScale).tickSize(-width).tickFormat('');
+            // Gridlines will be created dynamically in updateChart
 
             // Divider line
             g.append('line').attr('x1', 0).attr('x2', width).attr('y1', height / 2).attr('y2', height / 2)
@@ -488,18 +494,26 @@
                 if (selectedSectorsTime.size < sectors.length) {
                     filteredData = filteredData.filter(d => selectedSectorsTime.has(d.sector));
                 }
+                
+                // Remove old chart elements
+                g.selectAll('.price-line, .volume-line, .price-point, .volume-point, .grid, .x-axis, .y-price-axis, .y-volume-axis, .axis-label').remove();
+                
                 if (filteredData.length > 0) {
+                    // Update scales based on filtered data
                     xScale.domain(d3.extent(filteredData, d => d.date));
+                    yPriceScale.domain(d3.extent(filteredData, d => d.adj_close)).nice();
+                    yVolumeScale.domain(d3.extent(filteredData, d => d.volume)).nice();
                     
-                    // Update gridlines
-                    g.selectAll('.grid').remove();
+                    // Update gridlines with new scales
+                    const xAxisGrid = d3.axisBottom(xScale).tickSize(-height / 2).tickFormat('');
+                    const yPriceAxisGrid = d3.axisLeft(yPriceScale).tickSize(-width).tickFormat('');
+                    const yVolumeAxisGrid = d3.axisRight(yVolumeScale).tickSize(-width).tickFormat('');
+                    
                     g.append('g').attr('class', 'grid').attr('transform', `translate(0,${height / 2})`).call(xAxisGrid);
                     g.append('g').attr('class', 'grid').call(yPriceAxisGrid);
                     g.append('g').attr('class', 'grid').attr('transform', `translate(${width}, 0)`).call(yVolumeAxisGrid);
                     
                     // Update axes
-                    g.selectAll('.x-axis, .y-price-axis, .y-volume-axis').remove();
-                    
                     const xAxis = d3.axisBottom(xScale)
                         .ticks(d3.timeMonth.every(1))
                         .tickFormat(d3.timeFormat('%b'));
@@ -533,102 +547,117 @@
                         .attr('transform', `translate(${width / 2}, ${height + 50})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Volume (Millions)');
-                }
-
-                // Remove old lines
-                g.selectAll('.price-line, .volume-line, .price-point, .volume-point').remove();
-                
-                // Group by ticker
-                const grouped = d3.group(filteredData, d => d.Ticker);
-                
-                grouped.forEach((values, ticker) => {
-                    const sector = values[0].sector;
-                    const color = colorScale(sector);
                     
-                    // Price line
-                    const pricePath = g.append('path')
-                        .datum(values)
-                        .attr('class', 'price-line')
-                        .attr('fill', 'none')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 2)
-                        .attr('opacity', 0.8)
-                        .attr('d', priceLine)
-                        .style('cursor', 'pointer');
+                    // Remove old lines
+                    g.selectAll('.price-line, .volume-line, .price-point, .volume-point').remove();
                     
-                    // Volume line
-                    const volumePath = g.append('path')
-                        .datum(values)
-                        .attr('class', 'volume-line')
-                        .attr('fill', 'none')
-                        .attr('stroke', color)
-                        .attr('stroke-width', 1.5)
-                        .attr('stroke-dasharray', '4,4')
-                        .attr('opacity', 0.6)
-                        .attr('d', volumeLine)
-                        .style('cursor', 'pointer');
+                    // Group by ticker
+                    const grouped = d3.group(filteredData, d => d.Ticker);
                     
-                    // Add hover interactions
-                    [pricePath, volumePath].forEach(path => {
-                        path.on('mouseover', function() {
-                            d3.select(this).attr('stroke-width', 3).attr('opacity', 1);
-                        })
-                        .on('mouseout', function() {
-                            if (this.classList.contains('price-line')) {
-                                d3.select(this).attr('stroke-width', 2).attr('opacity', 0.8);
-                            } else {
-                                d3.select(this).attr('stroke-width', 1.5).attr('opacity', 0.6);
-                            }
+                    grouped.forEach((values, ticker) => {
+                        const sector = values[0].sector;
+                        const color = colorScale(sector);
+                        
+                        // Price line with improved rendering
+                        const pricePath = g.append('path')
+                            .datum(values)
+                            .attr('class', 'price-line')
+                            .attr('fill', 'none')
+                            .attr('stroke', color)
+                            .attr('stroke-width', 2.5)
+                            .attr('opacity', 0.8)
+                            .attr('d', priceLine)
+                            .style('cursor', 'pointer')
+                            .style('shape-rendering', 'geometricPrecision')
+                            .style('vector-effect', 'non-scaling-stroke');
+                        
+                        // Volume line with improved rendering
+                        const volumePath = g.append('path')
+                            .datum(values)
+                            .attr('class', 'volume-line')
+                            .attr('fill', 'none')
+                            .attr('stroke', color)
+                            .attr('stroke-width', 2)
+                            .attr('stroke-dasharray', '4,4')
+                            .attr('opacity', 0.6)
+                            .attr('d', volumeLine)
+                            .style('cursor', 'pointer')
+                            .style('shape-rendering', 'geometricPrecision')
+                            .style('vector-effect', 'non-scaling-stroke');
+                        
+                        // Add hover interactions
+                        [pricePath, volumePath].forEach(path => {
+                            path.on('mouseover', function() {
+                                d3.select(this).attr('stroke-width', 3).attr('opacity', 1);
+                            })
+                            .on('mouseout', function() {
+                                if (this.classList.contains('price-line')) {
+                                    d3.select(this).attr('stroke-width', 2.5).attr('opacity', 0.8);
+                                } else {
+                                    d3.select(this).attr('stroke-width', 2).attr('opacity', 0.6);
+                                }
+                            });
                         });
                     });
-                });
 
-                // Mouse tracking on overlay
-                overlay.on('mousemove', function(event) {
-                    const [mouseX] = d3.pointer(event, this);
-                    const date = xScale.invert(mouseX);
-                    
-                    // Find closest data point
-                    let closest = null;
-                    let minDist = Infinity;
-                    filteredData.forEach(d => {
-                        const dist = Math.abs(xScale(d.date) - mouseX);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            closest = d;
-                        }
-                    });
-                    
-                    if (closest && minDist < 20) {
-                        hoverLine.attr('x1', mouseX).attr('x2', mouseX)
-                            .attr('y1', 0).attr('y2', height).attr('opacity', 0.6);
+                    // Mouse tracking on overlay
+                    overlay.on('mousemove', function(event) {
+                        const [mouseX] = d3.pointer(event, this);
+                        const date = xScale.invert(mouseX);
                         
-                        tooltip.style('opacity', 1)
-                            .html(`
-                                <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">
-                                    ${closest.Ticker} - ${formatDate(closest.date)}
-                                </div>
-                                <div style="margin-bottom: 5px; color: ${colorScale(closest.sector)};">
-                                    <strong>Sector:</strong> ${closest.sector}
-                                </div>
-                                <div style="margin-bottom: 5px;">
-                                    <strong>Price:</strong> ${formatPrice(closest.adj_close)}
-                                </div>
-                                <div style="margin-bottom: 5px;">
-                                    <strong>Volume:</strong> ${formatVolume(closest.volume)}
-                                </div>
-                            `)
-                            .style('left', (event.pageX + 15) + 'px')
-                            .style('top', (event.pageY - 10) + 'px');
-                    } else {
+                        // Find closest data point
+                        let closest = null;
+                        let minDist = Infinity;
+                        filteredData.forEach(d => {
+                            const dist = Math.abs(xScale(d.date) - mouseX);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                closest = d;
+                            }
+                        });
+                        
+                        if (closest && minDist < 20) {
+                            hoverLine.attr('x1', mouseX).attr('x2', mouseX)
+                                .attr('y1', 0).attr('y2', height).attr('opacity', 0.6);
+                            
+                            tooltip.style('opacity', 1)
+                                .html(`
+                                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">
+                                        ${closest.Ticker} - ${formatDate(closest.date)}
+                                    </div>
+                                    <div style="margin-bottom: 5px; color: ${colorScale(closest.sector)};">
+                                        <strong>Sector:</strong> ${closest.sector}
+                                    </div>
+                                    <div style="margin-bottom: 5px;">
+                                        <strong>Price:</strong> ${formatPrice(closest.adj_close)}
+                                    </div>
+                                    <div style="margin-bottom: 5px;">
+                                        <strong>Volume:</strong> ${formatVolume(closest.volume)}
+                                    </div>
+                                `)
+                                .style('left', (event.pageX + 15) + 'px')
+                                .style('top', (event.pageY - 10) + 'px');
+                        } else {
+                            hoverLine.attr('opacity', 0);
+                            tooltip.style('opacity', 0);
+                        }
+                    })
+                    .on('mouseout', function() {
                         hoverLine.attr('opacity', 0);
                         tooltip.style('opacity', 0);
-                    }
-                })
-                .on('mouseout', function() {
-                    hoverLine.attr('opacity', 0);
-                    tooltip.style('opacity', 0);
-                });
+                    });
+                } else {
+                    // Show message when no data
+                    g.selectAll('.no-data-message').remove();
+                    g.append('text')
+                        .attr('class', 'no-data-message')
+                        .attr('x', width / 2)
+                        .attr('y', height / 2)
+                        .attr('text-anchor', 'middle')
+                        .attr('font-size', '16px')
+                        .attr('fill', '#999')
+                        .text('No data available for selected filters');
+                }
             }
 
             // Add sector selector dropdown
