@@ -200,7 +200,6 @@
             evt.currentTarget.classList.add('active');
         }
 
-        // Add brush and link functionality for sector filtering
         let selectedSectors = new Set();
         
         function setupBrushAndLink() {
@@ -504,7 +503,7 @@
 
                     // Add axis labels
                     g.selectAll('.axis-label').remove();
-                    // Date label - moved higher (reduced from 50 to 35)
+                    // Date label 
                     g.append('text').attr('class', 'axis-label')
                         .attr('transform', `translate(${width / 2}, ${height / 2 + 35})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
@@ -519,8 +518,6 @@
                         .attr('transform', `translate(${width / 2}, ${height + 50})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Volume (Millions)');
-                    
-                    // Remove old lines
                     g.selectAll('.price-line, .volume-line, .price-point, .volume-point').remove();
                     
                     // Group by ticker
@@ -530,7 +527,7 @@
                         const sector = values[0].sector;
                         const color = colorScale(sector);
                         
-                        // Price line with improved rendering
+                        // Price line
                         const pricePath = g.append('path')
                             .datum(values)
                             .attr('class', 'price-line')
@@ -571,7 +568,7 @@
                         });
                     });
 
-                    // Mouse tracking on overlay - show sector-level information
+                    // Mouse tracking on overlay
                     overlay.on('mousemove', function(event) {
                         const [mouseX] = d3.pointer(event, this);
                         const date = xScale.invert(mouseX);
@@ -650,7 +647,6 @@
                         tooltip.style('opacity', 0);
                     });
                 } else {
-                    // Show message when no data
                     g.append('text')
                         .attr('class', 'no-data-message')
                         .attr('x', width / 2)
@@ -662,7 +658,7 @@
                 }
             }
 
-            // Add legend (non-interactive, just for reference)
+            // Add legend 
             const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
             
             const legendItems = legend.selectAll('.legend-item')
