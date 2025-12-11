@@ -84,7 +84,7 @@
 
             <section class="figure-block">
                 <h2>Time-Slider: Trading Volume and Price Trends</h2>
-                <p class="instructions">Use the slider to explore trends over the years. Hover over the chart to see detailed information.</p>
+                <p class="instructions">Use the year slider to explore trends over the years. Hover over the chart to see detailed information for each company.</p>
                 <div id="d3-timeslider"></div>
                 <div id="slider-container">
                     <label>Year: <span id="year-display">2019</span></label>
@@ -445,7 +445,6 @@
             const sectors = [...new Set(data.map(d => d.sector))];
             const colorScale = d3.scaleOrdinal().domain(sectors).range(d3.schemeCategory10);
             const tooltip = d3.select('#tooltip');
-            let selectedSectorsTime = new Set(sectors);
 
             let xScale = d3.scaleTime().range([0, width]);
             let yPriceScale = d3.scaleLinear().range([height / 2, 0]);
@@ -489,14 +488,10 @@
                 .attr('opacity', 0);
 
             function updateChart(year) {
-                let filteredData = data.filter(d => d.date.getFullYear() === year);
-                // Apply sector filter - filter if not all sectors are selected
-                if (selectedSectorsTime.size > 0 && selectedSectorsTime.size < sectors.length) {
-                    filteredData = filteredData.filter(d => selectedSectorsTime.has(d.sector));
-                }
+                const filteredData = data.filter(d => d.date.getFullYear() === year);
                 
                 // Remove old chart elements
-                g.selectAll('.price-line, .volume-line, .price-point, .volume-point, .grid, .x-axis, .y-price-axis, .y-volume-axis, .axis-label').remove();
+                g.selectAll('.price-line, .volume-line, .price-point, .volume-point, .grid, .x-axis, .y-price-axis, .y-volume-axis, .axis-label, .no-data-message').remove();
                 
                 if (filteredData.length > 0) {
                     // Update scales based on filtered data
@@ -648,7 +643,6 @@
                     });
                 } else {
                     // Show message when no data
-                    g.selectAll('.no-data-message').remove();
                     g.append('text')
                         .attr('class', 'no-data-message')
                         .attr('x', width / 2)
@@ -656,11 +650,11 @@
                         .attr('text-anchor', 'middle')
                         .attr('font-size', '16px')
                         .attr('fill', '#999')
-                        .text('No data available for selected filters');
+                        .text('No data available for selected year');
                 }
             }
 
-            // Add legend with clickable filtering (create first so dropdown can reference it)
+            // Add legend (non-interactive, just for reference)
             const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
             
             const legendItems = legend.selectAll('.legend-item')
@@ -668,34 +662,13 @@
                 .enter()
                 .append('g')
                 .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 25})`)
-                .style('cursor', 'pointer')
-                .on('click', function(event, d) {
-                    if (selectedSectorsTime.has(d)) {
-                        selectedSectorsTime.delete(d);
-                        d3.select(this).select('rect').attr('opacity', 0.3);
-                    } else {
-                        selectedSectorsTime.add(d);
-                        d3.select(this).select('rect').attr('opacity', 1);
-                    }
-                    // Update dropdown to reflect legend selection
-                    if (selectedSectorsTime.size === sectors.length) {
-                        selector.property('value', 'All');
-                    } else if (selectedSectorsTime.size === 1) {
-                        const selectedSector = Array.from(selectedSectorsTime)[0];
-                        selector.property('value', selectedSector);
-                    } else {
-                        selector.property('value', 'All'); // Multiple selected, show All
-                    }
-                    updateChart(document.getElementById('year-slider').value);
-                });
+                .attr('transform', (d, i) => `translate(0, ${i * 25})`);
 
             legendItems.append('rect')
                 .attr('width', 18)
                 .attr('height', 18)
                 .attr('fill', d => colorScale(d))
-                .attr('rx', 3)
-                .attr('opacity', 1);
+                .attr('rx', 3);
 
             legendItems.append('text')
                 .attr('x', 25)
@@ -703,38 +676,6 @@
                 .attr('font-size', '12px')
                 .attr('fill', '#333')
                 .text(d => d);
-
-            // Add sector selector dropdown
-            const selectorContainer = d3.select('#d3-timeslider')
-                .append('div')
-                .style('margin-bottom', '1rem')
-                .style('padding', '0.5rem')
-                .style('background', '#f9f9f9')
-                .style('border-radius', '4px');
-            
-            selectorContainer.append('label')
-                .text('Filter by Sector: ')
-                .style('margin-right', '0.5rem')
-                .style('font-weight', '600');
-            
-            const selector = selectorContainer.append('select')
-                .style('padding', '0.25rem')
-                .style('border-radius', '4px')
-                .style('border', '1px solid #ddd')
-                .on('change', function() {
-                    const selected = this.value;
-                    selectedSectorsTime = selected === 'All' ? new Set(sectors) : new Set([selected]);
-                    // Update legend opacity to reflect selection
-                    legendItems.selectAll('rect').attr('opacity', d => 
-                        selected === 'All' || selectedSectorsTime.has(d) ? 1 : 0.3
-                    );
-                    updateChart(document.getElementById('year-slider').value);
-                });
-            
-            const allOption = selector.append('option').attr('value', 'All').text('All Sectors');
-            sectors.forEach(s => selector.append('option').attr('value', s).text(s));
-            // Set default selection
-            selector.property('value', 'All');
 
             document.getElementById('year-slider').addEventListener('input', function() {
                 const year = +this.value;
