@@ -10,7 +10,7 @@ alt.data_transformers.disable_max_rows()
 
 # Improve chart quality and disable editor options
 alt.renderers.set_embed_options(
-    scaleFactor=3,  # Higher scale factor for sharper rendering
+    scaleFactor=3, 
     theme='default',
     actions=False  
 )
@@ -47,19 +47,13 @@ def download_price_data(tickers, start_date, end_date):
 
     for ticker in ticker_list:
         if ticker not in raw.columns.get_level_values(0):
-            # In case data is missing for some ticker
             continue
-
-        # Raw has a multi index column (field, ticker)
-        # or (ticker, field) depending on yfinance version
-        # We handle both possibilities
+            
         cols = raw.columns
 
         if ticker in cols.get_level_values(0):
-            # layout: (ticker, field)
             df_t = raw[ticker].copy()
         else:
-            # layout: (field, ticker)
             df_t = raw.xs(ticker, axis=1, level=1).copy()
 
         df_t = df_t.reset_index()
@@ -73,7 +67,7 @@ def download_price_data(tickers, start_date, end_date):
         columns={
             "Date": "date",
             "Adj Close": "adj_close",
-            "Close": "adj_close",  # fallback if Adj Close missing
+            "Close": "adj_close",  
             "Volume": "volume",
         },
         inplace=True,
@@ -213,7 +207,7 @@ def make_chart_normalized_prices(sector_index_df):
         )
     )
     
-    # Main chart with improved quality
+    # Main chart
     chart = (
         alt.Chart(sector_index_df)
         .mark_line(strokeWidth=3, point=True, opacity=0.8)
@@ -273,7 +267,7 @@ def make_chart_return_vs_vol(summary_df, prices_df):
     sector_selection = alt.selection_multi(fields=["sector"], bind="legend")
     company_selection = alt.selection_multi(fields=["Ticker"])
     
-    # Monthly trend chart - aggregate by sector for cleaner visualization
+    # Monthly trend chart 
     monthly_sector_data = (
         monthly_data.groupby(["sector", "year_month"])["avg_return_pct"]
         .mean()
@@ -307,7 +301,7 @@ def make_chart_return_vs_vol(summary_df, prices_df):
         )
     )
     
-    # Scatter plot with selection - improved quality
+    # Scatter plot with selection 
     scatter = (
         alt.Chart(summary_df)
         .mark_circle(size=150, strokeWidth=2, stroke='white', opacity=0.8)
@@ -411,7 +405,6 @@ def make_chart_correlation_heatmap(corr_long_df, prices_df):
 
 
 def main():
-    # Ensure output directory exists
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     print("Downloading price data...")
@@ -431,12 +424,11 @@ def main():
     corr_long = build_sector_correlation(prices)
 
     print("Creating Altair charts...")
-    # Save charts with editor options disabled for clean integration
     embed_options = {
-        'actions': False,  # Disable editor menu
-        'scaleFactor': 3,  # Higher quality for sharper rendering
+        'actions': False, 
+        'scaleFactor': 3,  
         'theme': 'default',
-        'renderer': 'svg'  # Use SVG for crisp rendering
+        'renderer': 'svg'  
     }
     
     make_chart_normalized_prices(sector_index).save(
