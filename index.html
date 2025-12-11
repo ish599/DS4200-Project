@@ -595,43 +595,75 @@
                         });
                     });
 
-                    // Mouse tracking on overlay
+                    // Mouse tracking on overlay - show sector-level information
                     overlay.on('mousemove', function(event) {
                         const [mouseX] = d3.pointer(event, this);
                         const date = xScale.invert(mouseX);
                         
-                        // Find closest data point
-                        let closest = null;
+                        // Find closest date in data
+                        let closestDate = null;
                         let minDist = Infinity;
                         filteredData.forEach(d => {
                             const dist = Math.abs(xScale(d.date) - mouseX);
                             if (dist < minDist) {
                                 minDist = dist;
-                                closest = d;
+                                closestDate = d.date;
                             }
                         });
                         
-                        if (closest && minDist < 20) {
-                            hoverLine.attr('x1', mouseX).attr('x2', mouseX)
-                                .attr('y1', 0).attr('y2', height).attr('opacity', 0.6);
+                        if (closestDate && minDist < 30) {
+                            // Get all data points for this date
+                            const dateData = filteredData.filter(d => 
+                                d.date.getTime() === closestDate.getTime()
+                            );
                             
-                            tooltip.style('opacity', 1)
-                                .html(`
-                                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px;">
-                                        ${closest.Ticker} - ${formatDate(closest.date)}
+                            if (dateData.length > 0) {
+                                hoverLine.attr('x1', mouseX).attr('x2', mouseX)
+                                    .attr('y1', 0).attr('y2', height).attr('opacity', 0.6);
+                                
+                                // Group by sector and calculate statistics
+                                const sectorGroups = d3.group(dateData, d => d.sector);
+                                let tooltipContent = `
+                                    <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px; border-bottom: 2px solid #666; padding-bottom: 5px;">
+                                        ${formatDate(closestDate)}
                                     </div>
-                                    <div style="margin-bottom: 5px; color: ${colorScale(closest.sector)};">
-                                        <strong>Sector:</strong> ${closest.sector}
-                                    </div>
-                                    <div style="margin-bottom: 5px;">
-                                        <strong>Price:</strong> ${formatPrice(closest.adj_close)}
-                                    </div>
-                                    <div style="margin-bottom: 5px;">
-                                        <strong>Volume:</strong> ${formatVolume(closest.volume)}
-                                    </div>
-                                `)
-                                .style('left', (event.pageX + 15) + 'px')
-                                .style('top', (event.pageY - 10) + 'px');
+                                `;
+                                
+                                sectors.forEach(sector => {
+                                    if (sectorGroups.has(sector)) {
+                                        const sectorData = sectorGroups.get(sector);
+                                        const avgPrice = d3.mean(sectorData, d => d.adj_close);
+                                        const totalVolume = d3.sum(sectorData, d => d.volume);
+                                        const companies = sectorData.map(d => d.Ticker).join(', ');
+                                        
+                                        tooltipContent += `
+                                            <div style="margin-bottom: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; border-left: 4px solid ${colorScale(sector)};">
+                                                <div style="font-weight: bold; font-size: 14px; color: ${colorScale(sector)}; margin-bottom: 5px;">
+                                                    ${sector}
+                                                </div>
+                                                <div style="font-size: 12px; margin-bottom: 3px;">
+                                                    <strong>Avg Price:</strong> ${formatPrice(avgPrice)}
+                                                </div>
+                                                <div style="font-size: 12px; margin-bottom: 3px;">
+                                                    <strong>Total Volume:</strong> ${formatVolume(totalVolume)}
+                                                </div>
+                                                <div style="font-size: 11px; color: #ccc; margin-top: 5px;">
+                                                    Companies: ${companies}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }
+                                });
+                                
+                                tooltip.style('opacity', 1)
+                                    .html(tooltipContent)
+                                    .style('left', (event.pageX + 15) + 'px')
+                                    .style('top', (event.pageY - 10) + 'px')
+                                    .style('max-width', '300px');
+                            } else {
+                                hoverLine.attr('opacity', 0);
+                                tooltip.style('opacity', 0);
+                            }
                         } else {
                             hoverLine.attr('opacity', 0);
                             tooltip.style('opacity', 0);
