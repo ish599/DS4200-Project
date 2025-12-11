@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "vconcat": [{"hconcat": [{"data": {"name": "data-e3045cd5cb0c3363c2a42b927a905647"}, "mark": {"type": "bar"}, "encoding": {"color": {"field": "sector", "legend": null, "title": "Sector", "type": "nominal"}, "tooltip": [{"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "avg_return_pct", "format": ".3f", "title": "Avg Return", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "sector", "sort": "-y", "title": "Sector", "type": "nominal"}, "y": {"field": "avg_return_pct", "title": "Average Daily Return (%)", "type": "quantitative"}}, "height": 300, "title": "Average Return by Sector", "width": 300}, {"data": {"name": "data-5668e7d48f753f81f86aced141a8ac06"}, "mark": {"type": "bar"}, "encoding": {"color": {"field": "sector", "legend": null, "title": "Sector", "type": "nominal"}, "tooltip": [{"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "volatility_pct", "format": ".3f", "title": "Avg Volatility", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "sector", "sort": "-y", "title": "Sector", "type": "nominal"}, "y": {"field": "volatility_pct", "title": "Average Volatility (%)", "type": "quantitative"}}, "height": 300, "title": "Average Volatility by Sector", "width": 300}]}, {"hconcat": [{"mark": {"type": "boxplot", "extent": "min-max"}, "encoding": {"color": {"field": "sector", "legend": null, "title": "Sector", "type": "nominal"}, "tooltip": [{"field": "Ticker", "title": "Ticker", "type": "nominal"}, {"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "avg_return_pct", "format": ".3f", "title": "Return", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "sector", "title": "Sector", "type": "nominal"}, "y": {"field": "avg_return_pct", "title": "Daily Return (%)", "type": "quantitative"}}, "height": 300, "title": "Return Distribution by Sector", "width": 300}, {"mark": {"type": "boxplot", "extent": "min-max"}, "encoding": {"color": {"field": "sector", "legend": null, "title": "Sector", "type": "nominal"}, "tooltip": [{"field": "Ticker", "title": "Ticker", "type": "nominal"}, {"field": "sector", "title": "Sector", "type": "nominal"}, {"field": "volatility_pct", "format": ".3f", "title": "Volatility", "type": "quantitative"}], "x": {"axis": {"labelAngle": -45}, "field": "sector", "title": "Sector", "type": "nominal"}, "y": {"field": "volatility_pct", "title": "Volatility (%)", "type": "quantitative"}}, "height": 300, "title": "Volatility Distribution by Sector", "width": 300}], "data": {"name": "data-dd7ac0ec0417bef7df07011650fe3afb"}}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"data-e3045cd5cb0c3363c2a42b927a905647": [{"sector": "Technology", "avg_return_pct": 0.1229375409086063}, {"sector": "Finance", "avg_return_pct": 0.08526210947234986}, {"sector": "Energy", "avg_return_pct": 0.062000276186149166}, {"sector": "Healthcare", "avg_return_pct": 0.02512876819724549}], "data-5668e7d48f753f81f86aced141a8ac06": [{"sector": "Energy", "volatility_pct": 2.0032822951369624}, {"sector": "Finance", "volatility_pct": 1.9890564599347162}, {"sector": "Technology", "volatility_pct": 1.8811173269422197}, {"sector": "Healthcare", "volatility_pct": 1.8500605426070655}], "data-dd7ac0ec0417bef7df07011650fe3afb": [{"Ticker": "AAPL", "sector": "Technology", "avg_return": 0.0013483507840698868, "volatility": 0.019681373799233588, "avg_return_pct": 0.1348350784069887, "volatility_pct": 1.9681373799233588}, {"Ticker": "BAC", "sector": "Finance", "avg_return": 0.000753562248117818, "volatility": 0.02091519220092643, "avg_return_pct": 0.0753562248117818, "volatility_pct": 2.091519220092643}, {"Ticker": "CVX", "sector": "Energy", "avg_return": 0.0005655951477724587, "volatility": 0.020367461272213717, "avg_return_pct": 0.05655951477724587, "volatility_pct": 2.0367461272213716}, {"Ticker": "JPM", "sector": "Finance", "avg_return": 0.0009516799413291792, "volatility": 0.018865936997767896, "avg_return_pct": 0.09516799413291792, "volatility_pct": 1.8865936997767896}, {"Ticker": "MSFT", "sector": "Technology", "avg_return": 0.0011104000341022391, "volatility": 0.017940972739610806, "avg_return_pct": 0.11104000341022391, "volatility_pct": 1.7940972739610805}, {"Ticker": "PFE", "sector": "Healthcare", "avg_return": 5.247552629815897e-05, "volatility": 0.016549237086575522, "avg_return_pct": 0.005247552629815897, "volatility_pct": 1.6549237086575523}, {"Ticker": "UNH", "sector": "Healthcare", "avg_return": 0.0004500998376467508, "volatility": 0.02045197376556579, "avg_return_pct": 0.045009983764675084, "volatility_pct": 2.0451973765565787}, {"Ticker": "XOM", "sector": "Energy", "avg_return": 0.0006744103759505246, "volatility": 0.019698184630525528, "avg_return_pct": 0.06744103759505246, "volatility_pct": 1.9698184630525528}]}};
+      var embedOpt = {"theme": "default", "scaleFactor": 2, "mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

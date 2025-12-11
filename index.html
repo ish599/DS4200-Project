@@ -490,8 +490,8 @@
 
             function updateChart(year) {
                 let filteredData = data.filter(d => d.date.getFullYear() === year);
-                // Apply sector filter
-                if (selectedSectorsTime.size < sectors.length) {
+                // Apply sector filter - filter if not all sectors are selected
+                if (selectedSectorsTime.size > 0 && selectedSectorsTime.size < sectors.length) {
                     filteredData = filteredData.filter(d => selectedSectorsTime.has(d.sector));
                 }
                 
@@ -660,6 +660,50 @@
                 }
             }
 
+            // Add legend with clickable filtering (create first so dropdown can reference it)
+            const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
+            
+            const legendItems = legend.selectAll('.legend-item')
+                .data(sectors)
+                .enter()
+                .append('g')
+                .attr('class', 'legend-item')
+                .attr('transform', (d, i) => `translate(0, ${i * 25})`)
+                .style('cursor', 'pointer')
+                .on('click', function(event, d) {
+                    if (selectedSectorsTime.has(d)) {
+                        selectedSectorsTime.delete(d);
+                        d3.select(this).select('rect').attr('opacity', 0.3);
+                    } else {
+                        selectedSectorsTime.add(d);
+                        d3.select(this).select('rect').attr('opacity', 1);
+                    }
+                    // Update dropdown to reflect legend selection
+                    if (selectedSectorsTime.size === sectors.length) {
+                        selector.property('value', 'All');
+                    } else if (selectedSectorsTime.size === 1) {
+                        const selectedSector = Array.from(selectedSectorsTime)[0];
+                        selector.property('value', selectedSector);
+                    } else {
+                        selector.property('value', 'All'); // Multiple selected, show All
+                    }
+                    updateChart(document.getElementById('year-slider').value);
+                });
+
+            legendItems.append('rect')
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('fill', d => colorScale(d))
+                .attr('rx', 3)
+                .attr('opacity', 1);
+
+            legendItems.append('text')
+                .attr('x', 25)
+                .attr('y', 14)
+                .attr('font-size', '12px')
+                .attr('fill', '#333')
+                .text(d => d);
+
             // Add sector selector dropdown
             const selectorContainer = d3.select('#d3-timeslider')
                 .append('div')
@@ -680,46 +724,15 @@
                 .on('change', function() {
                     const selected = this.value;
                     selectedSectorsTime = selected === 'All' ? new Set(sectors) : new Set([selected]);
+                    // Update legend opacity to reflect selection
+                    legendItems.selectAll('rect').attr('opacity', d => 
+                        selected === 'All' || selectedSectorsTime.has(d) ? 1 : 0.3
+                    );
                     updateChart(document.getElementById('year-slider').value);
                 });
             
-            selector.append('option').attr('value', 'All').text('All Sectors');
+            selector.append('option').attr('value', 'All').text('All Sectors').attr('selected', true);
             sectors.forEach(s => selector.append('option').attr('value', s).text(s));
-
-            // Add legend with clickable filtering
-            const legend = g.append('g').attr('transform', `translate(${width + 20}, 20)`);
-            
-            const legendItems = legend.selectAll('.legend-item')
-                .data(sectors)
-                .enter()
-                .append('g')
-                .attr('class', 'legend-item')
-                .attr('transform', (d, i) => `translate(0, ${i * 25})`)
-                .style('cursor', 'pointer')
-                .on('click', function(event, d) {
-                    if (selectedSectorsTime.has(d)) {
-                        selectedSectorsTime.delete(d);
-                        d3.select(this).select('rect').attr('opacity', 0.3);
-                    } else {
-                        selectedSectorsTime.add(d);
-                        d3.select(this).select('rect').attr('opacity', 1);
-                    }
-                    updateChart(document.getElementById('year-slider').value);
-                });
-
-            legendItems.append('rect')
-                .attr('width', 18)
-                .attr('height', 18)
-                .attr('fill', d => colorScale(d))
-                .attr('rx', 3)
-                .attr('opacity', 1);
-
-            legendItems.append('text')
-                .attr('x', 25)
-                .attr('y', 14)
-                .attr('font-size', '12px')
-                .attr('fill', '#333')
-                .text(d => d);
 
             document.getElementById('year-slider').addEventListener('input', function() {
                 const year = +this.value;
