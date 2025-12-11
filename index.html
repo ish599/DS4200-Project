@@ -136,34 +136,17 @@
         <!-- Sector Comparison -->
         <div id="sector-comparison" class="tab-content">
             <section class="figure-block">
-                <h2>Sector Return Correlations and Volatility Analysis</h2>
-                <iframe src="fig_altair_correlation_heatmap.html" width="100%" height="800" frameborder="0" style="border: 1px solid #ddd;"></iframe>
+                <h2>Sector Return Correlations</h2>
+                <iframe src="fig_altair_correlation_heatmap.html" width="100%" height="650" frameborder="0" style="border: 1px solid #ddd;"></iframe>
                 <div class="interpretation">
-                    <p><strong>Interpretation:</strong> This multi-panel visualization provides comprehensive sector relationship analysis. 
-                    The top heatmap shows correlation coefficients between sector daily returns, where values closer to 1 indicate 
-                    sectors that move together, and values closer to -1 indicate inverse relationships. The bottom-left chart shows 
-                    how volatility has evolved over time by sector, revealing periods of increased market uncertainty. The bottom-right 
-                    box plot displays the distribution of volatility across sectors, showing which sectors are consistently more or less 
-                    volatile. High correlations between sectors (especially during crises) suggest systemic risks, while low correlations 
-                    indicate diversification opportunities. This analysis connects to the time series visualization by explaining why 
-                    sectors moved together during major events like COVID-19.</p>
+                    <p><strong>Interpretation:</strong> This heatmap shows correlation coefficients between sector daily returns, where 
+                    values closer to 1 indicate sectors that move together, and values closer to -1 indicate inverse relationships. 
+                    High correlations between sectors (especially during crises) suggest systemic risks that affect all sectors, while 
+                    low correlations indicate diversification opportunities. This analysis connects to the time series visualization by 
+                    explaining why sectors moved together during major events like COVID-19.</p>
                 </div>
             </section>
 
-            <section class="figure-block">
-                <h2>Sector Performance Comparison</h2>
-                <iframe src="fig_altair_sector_comparison.html" width="100%" height="650" frameborder="0" style="border: 1px solid #ddd;"></iframe>
-                <div class="interpretation">
-                    <p><strong>Interpretation:</strong> These bar charts and box plots provide direct comparisons between sectors. 
-                    The top row shows average returns and volatility by sector, making it easy to identify which sectors have 
-                    historically performed best. The bottom row shows distributions, revealing the variability within each sector. 
-                    Sectors with wide boxes have more internal variation (companies within the sector differ significantly), while 
-                    narrow boxes indicate more homogeneous sector performance. This visualization helps answer questions like: 
-                    "Which sector offers the best average returns?" and "Which sector has the most consistent performance?" 
-                    These insights complement the correlation analysis by providing context for why certain sectors move together 
-                    or independently.</p>
-                </div>
-            </section>
         </div>
 
         <!-- Conclusion -->
@@ -221,8 +204,6 @@
         let selectedSectors = new Set();
         
         function setupBrushAndLink() {
-            // This will be enhanced with actual brush implementation
-            // For now, we'll use the existing legend interactions
         }
 
         async function createD3Scatterplot() {
@@ -450,8 +431,6 @@
             let yPriceScale = d3.scaleLinear().range([height / 2, 0]);
             let yVolumeScale = d3.scaleLinear().range([height, height / 2]);
 
-            // Gridlines will be created dynamically in updateChart
-
             // Divider line
             g.append('line').attr('x1', 0).attr('x2', width).attr('y1', height / 2).attr('y2', height / 2)
                 .attr('stroke', '#999').attr('stroke-width', 2).attr('stroke-dasharray', '5,5');
@@ -536,8 +515,6 @@
                         .attr('transform', 'rotate(-90)').attr('y', -60).attr('x', -height / 4)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
                         .text('Price (USD)');
-                    
-                    // Volume label - moved to bottom of the chart (bottom graph area)
                     g.append('text').attr('class', 'axis-label')
                         .attr('transform', `translate(${width / 2}, ${height + 50})`)
                         .style('text-anchor', 'middle').style('font-size', '14px').style('font-weight', 'bold')
@@ -566,7 +543,6 @@
                             .style('shape-rendering', 'geometricPrecision')
                             .style('vector-effect', 'non-scaling-stroke');
                         
-                        // Volume line with improved rendering
                         const volumePath = g.append('path')
                             .datum(values)
                             .attr('class', 'volume-line')

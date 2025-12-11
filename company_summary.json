@@ -2,65 +2,65 @@
   {
     "Ticker": "AAPL",
     "sector": "Technology",
-    "avg_return": 0.0013483507826828206,
-    "volatility": 0.019681371305465975,
-    "avg_return_pct": 0.13483507826828206,
-    "volatility_pct": 1.9681371305465976
+    "avg_return": 0.0013483506386677724,
+    "volatility": 0.0196813753196514,
+    "avg_return_pct": 0.13483506386677724,
+    "volatility_pct": 1.96813753196514
   },
   {
     "Ticker": "BAC",
     "sector": "Finance",
-    "avg_return": 0.0007535621866041598,
-    "volatility": 0.020915189178922107,
-    "avg_return_pct": 0.07535621866041597,
-    "volatility_pct": 2.091518917892211
+    "avg_return": 0.0007535623452648194,
+    "volatility": 0.02091519203624681,
+    "avg_return_pct": 0.07535623452648194,
+    "volatility_pct": 2.091519203624681
   },
   {
     "Ticker": "CVX",
     "sector": "Energy",
-    "avg_return": 0.0005655951782148788,
-    "volatility": 0.020367465832046804,
-    "avg_return_pct": 0.05655951782148788,
-    "volatility_pct": 2.0367465832046805
+    "avg_return": 0.0005655951757792045,
+    "volatility": 0.02036746010375505,
+    "avg_return_pct": 0.056559517577920444,
+    "volatility_pct": 2.036746010375505
   },
   {
     "Ticker": "JPM",
     "sector": "Finance",
-    "avg_return": 0.0009516800989644206,
-    "volatility": 0.01886593448948397,
-    "avg_return_pct": 0.09516800989644206,
-    "volatility_pct": 1.886593448948397
+    "avg_return": 0.0009516799871815942,
+    "volatility": 0.018865928208929485,
+    "avg_return_pct": 0.09516799871815941,
+    "volatility_pct": 1.8865928208929486
   },
   {
     "Ticker": "MSFT",
     "sector": "Technology",
-    "avg_return": 0.0011104000130632316,
-    "volatility": 0.01794097650151988,
-    "avg_return_pct": 0.11104000130632316,
-    "volatility_pct": 1.7940976501519879
+    "avg_return": 0.0011103999933044523,
+    "volatility": 0.017940972806492116,
+    "avg_return_pct": 0.11103999933044523,
+    "volatility_pct": 1.7940972806492115
   },
   {
     "Ticker": "PFE",
     "sector": "Healthcare",
-    "avg_return": 5.247546897030334e-05,
-    "volatility": 0.016549235945207862,
-    "avg_return_pct": 0.005247546897030334,
-    "volatility_pct": 1.6549235945207863
+    "avg_return": 5.247540898454464e-05,
+    "volatility": 0.016549234206437197,
+    "avg_return_pct": 0.005247540898454464,
+    "volatility_pct": 1.6549234206437196
   },
   {
     "Ticker": "UNH",
     "sector": "Healthcare",
-    "avg_return": 0.00045009983018845967,
-    "volatility": 0.020451977107215226,
-    "avg_return_pct": 0.04500998301884597,
-    "volatility_pct": 2.0451977107215225
+    "avg_return": 0.0004500997420069628,
+    "volatility": 0.02045197505402249,
+    "avg_return_pct": 0.04500997420069628,
+    "volatility_pct": 2.045197505402249
   },
   {
     "Ticker": "XOM",
     "sector": "Energy",
-    "avg_return": 0.0006744105265890012,
-    "volatility": 0.01969818355850505,
-    "avg_return_pct": 0.06744105265890012,
-    "volatility_pct": 1.969818355850505
+    "avg_return": 0.0006744105616164183,
+    "volatility": 0.01969818964326709,
+    "avg_return_pct": 0.06744105616164182,
+    "volatility_pct": 1.969818964326709
   }
 ]
