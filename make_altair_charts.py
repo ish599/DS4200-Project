@@ -10,7 +10,7 @@ alt.data_transformers.disable_max_rows()
 
 # Improve chart quality and disable editor options
 alt.renderers.set_embed_options(
-    scaleFactor=2,
+    scaleFactor=3,  # Higher scale factor for sharper rendering
     theme='default',
     actions=False  
 )
@@ -273,27 +273,37 @@ def make_chart_return_vs_vol(summary_df, prices_df):
     sector_selection = alt.selection_multi(fields=["sector"], bind="legend")
     company_selection = alt.selection_multi(fields=["Ticker"])
     
-    # Monthly trend chart
+    # Monthly trend chart - aggregate by sector for cleaner visualization
+    monthly_sector_data = (
+        monthly_data.groupby(["sector", "year_month"])["avg_return_pct"]
+        .mean()
+        .reset_index()
+    )
+    
     monthly_chart = (
-        alt.Chart(monthly_data)
-        .mark_line(point=True, strokeWidth=2)
+        alt.Chart(monthly_sector_data)
+        .mark_line(point=True, strokeWidth=3, opacity=0.8)
         .encode(
-            x=alt.X("year_month:T", title="Month"),
+            x=alt.X("year_month:T", title="Month", axis=alt.Axis(format="%Y-%m")),
             y=alt.Y("avg_return_pct:Q", title="Average Monthly Return (%)"),
-            color=alt.Color("sector:N", title="Sector"),
+            color=alt.Color("sector:N", title="Sector", 
+                          scale=alt.Scale(scheme='category10')),
             tooltip=[
-                alt.Tooltip("Ticker:N", title="Ticker"),
                 alt.Tooltip("sector:N", title="Sector"),
-                alt.Tooltip("year_month:T", title="Month"),
+                alt.Tooltip("year_month:T", title="Month", format="%B %Y"),
                 alt.Tooltip("avg_return_pct:Q", title="Avg Return", format=".3f"),
             ],
         )
         .add_selection(sector_selection)
         .transform_filter(sector_selection)
         .properties(
-            width=600,
-            height=200,
-            title="Monthly Return Trends",
+            width=800,
+            height=250,
+            title=alt.TitleParams(
+                text="Monthly Return Trends by Sector",
+                fontSize=16,
+                fontWeight="bold"
+            ),
         )
     )
     
@@ -318,7 +328,7 @@ def make_chart_return_vs_vol(summary_df, prices_df):
             size=alt.condition(company_selection, alt.value(250), alt.value(150)),
             opacity=alt.condition(company_selection, alt.value(1), alt.value(0.7)),
             tooltip=[
-                alt.Tooltip("Ticker:N", title="Ticker", format=".0f"),
+                alt.Tooltip("Ticker:N", title="Ticker"),
                 alt.Tooltip("sector:N", title="Sector"),
                 alt.Tooltip("avg_return_pct:Q", title="Average Return", format=".3f"),
                 alt.Tooltip("volatility_pct:Q", title="Volatility", format=".3f"),
@@ -424,8 +434,9 @@ def main():
     # Save charts with editor options disabled for clean integration
     embed_options = {
         'actions': False,  # Disable editor menu
-        'scaleFactor': 2,  # Higher quality
-        'theme': 'default'
+        'scaleFactor': 3,  # Higher quality for sharper rendering
+        'theme': 'default',
+        'renderer': 'svg'  # Use SVG for crisp rendering
     }
     
     make_chart_normalized_prices(sector_index).save(
